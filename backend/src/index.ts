@@ -124,19 +124,30 @@ app.use("/api/v1/brain", brainRouter);
 
 
 async function connect() {
+  console.log('🔄 Starting server initialization...');
+  console.log('📦 Environment variables loaded');
+  console.log('🔢 PORT:', PORT);
+  console.log('🌐 NODE_ENV:', process.env.NODE_ENV);
+  console.log('🔗 MONGO_URI set:', !!process.env.MONGO_URI);
+  console.log('🌍 Allowed origins:', allowedWebOrigins);
+  
   const skipDb = process.env.SKIP_DB === "true" || false;
 
   if (!skipDb) {
     try {
+      console.log('🔌 Attempting database connection...');
       await connectDB();
+      console.log('✅ Database connection successful');
     } catch (err) {
-      console.error("Database connection failed:", err);
-      process.exit(1);
+      console.error("❌ Database connection failed:", err);
+      console.log('⚠️ Continuing without database...');
+      // Don't exit - continue without DB
     }
   } else {
-    console.log("SKIP_DB is true — skipping database connection.");
+    console.log("⏭️ SKIP_DB is true — skipping database connection.");
   }
 
+  console.log('🎧 Starting Express server on port', PORT);
   app.listen(PORT, () => {
     console.log(`
 ╔════════════════════════════════════════════════════════╗
@@ -145,10 +156,17 @@ async function connect() {
 ║  🔒 Allowed CORS Origins:
 ${allowedWebOrigins.map(o => `║     • ${o}`).join('\n')}
 ║  ⚠️  ALLOW_ALL_ORIGINS: ${process.env.ALLOW_ALL_ORIGINS || 'false'}
+║  ✅ Server started successfully!
 ╚════════════════════════════════════════════════════════╝
     `);
+    console.log('✅ /check endpoint available at: https://second-brain-vw8e.onrender.com/check');
   });
 }
-connect();
+
+console.log('🏁 Calling connect function...');
+connect().catch(err => {
+  console.error('💥 Fatal error during startup:', err);
+  process.exit(1);
+});
 
 export default app;
