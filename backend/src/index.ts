@@ -13,8 +13,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Allowed web origins (comma separated). Can be set via env var ALLOWED_WEB_ORIGINS.
-// Default includes the Netlify frontend URL.
-const allowedWebOrigins = (process.env.ALLOWED_WEB_ORIGINS || "https://secondbrain001.netlify.app")
+// Default includes the Netlify frontend URL - HARDCODED FOR DEPLOYMENT FIX
+const DEFAULT_ORIGINS = "https://secondbrain001.netlify.app,http://localhost:5173";
+const allowedWebOrigins = (process.env.ALLOWED_WEB_ORIGINS || DEFAULT_ORIGINS)
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
@@ -86,7 +87,28 @@ const corsOptions: ICorsOptions = {
   credentials: true
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
+
+// Add explicit CORS headers as backup
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+  const origin = req.headers.origin;
+  if (origin && allowedWebOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+    return;
+  }
+  
+  next();
+});
+
 app.use(express.json());
 
 app.get("/check", (req, res) => {
