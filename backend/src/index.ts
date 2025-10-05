@@ -10,7 +10,10 @@ import brainRouter from "./routes/brain";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Render automatically sets PORT, but fallback to 3000 for local dev
+const PORT = parseInt(process.env.PORT || '10000', 10);
+console.log('🔌 PORT from environment:', process.env.PORT);
+console.log('🔌 Using PORT:', PORT);
 
 // Allowed web origins (comma separated). Can be set via env var ALLOWED_WEB_ORIGINS.
 // Default includes the Netlify frontend URL - HARDCODED FOR DEPLOYMENT FIX
