@@ -10,11 +10,12 @@
   # Publish directory (relative to base)
   publish = "dist"
 
+[build.environment]
+  # Backend API URL (Render)
+  VITE_API_HOST = "https://second-brain-vw8e.onrender.com"
+
 # Redirect all requests to index.html for React Router to handle client-side routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Environment variables (set these in Netlify dashboard as well)
-# VITE_API_HOST = your backend URL from Render
