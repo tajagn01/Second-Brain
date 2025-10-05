@@ -49,12 +49,14 @@ const corsOptions: ICorsOptions = {
   origin: (origin, callback) => {
     // Log incoming origin for debugging CORS issues (preflight requests)
     console.log('CORS preflight origin:', origin);
+    console.log('Allowed origins:', allowedWebOrigins);
 
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
     // Allow requests from any origin listed in ALLOWED_WEB_ORIGINS env var.
     if (allowedWebOrigins.includes(origin)) {
+      console.log('✅ Origin allowed:', origin);
       return callback(null, true);
     }
 
@@ -63,9 +65,10 @@ const corsOptions: ICorsOptions = {
       return callback(null, true);
     }
 
+    console.log('❌ Origin blocked:', origin);
     callback(new Error("Not allowed by CORS"));
   },
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 };
