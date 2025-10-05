@@ -12,7 +12,7 @@
 
 [build.environment]
   # Backend API URL (Render)
-  VITE_API_HOST = "https://second-brain-vw8e.onrender.com"
+  VITE_API_HOST = "https://second-brain-mfob.onrender.com"
 
 # Redirect all requests to index.html for React Router to handle client-side routing
 [[redirects]]

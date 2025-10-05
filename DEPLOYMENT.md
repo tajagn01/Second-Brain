@@ -3,7 +3,7 @@
 ## 🚀 Production URLs
 
 - **Frontend (Netlify)**: https://secondbrain001.netlify.app
-- **Backend (Render)**: https://second-brain-vw8e.onrender.com
+- **Backend (Render)**: https://second-brain-mfob.onrender.com
 
 ---
 
