@@ -48,11 +48,22 @@ interface ICorsOptions {
 const corsOptions: ICorsOptions = {
   origin: (origin, callback) => {
     // Log incoming origin for debugging CORS issues (preflight requests)
-    console.log('CORS preflight origin:', origin);
-    console.log('Allowed origins:', allowedWebOrigins);
+    console.log('🔍 CORS preflight origin:', origin);
+    console.log('📋 Allowed origins:', allowedWebOrigins);
+    console.log('🌍 NODE_ENV:', process.env.NODE_ENV);
+    console.log('🔐 ALLOW_ALL_ORIGINS:', process.env.ALLOW_ALL_ORIGINS);
+
+    // Temporary: Allow all origins if flag is set (for debugging)
+    if (process.env.ALLOW_ALL_ORIGINS === "true") {
+      console.log('⚠️ ALLOW_ALL_ORIGINS is true - allowing all origins');
+      return callback(null, true);
+    }
 
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    if (!origin) {
+      console.log('✅ No origin - allowing request');
+      return callback(null, true);
+    }
 
     // Allow requests from any origin listed in ALLOWED_WEB_ORIGINS env var.
     if (allowedWebOrigins.includes(origin)) {
@@ -62,10 +73,12 @@ const corsOptions: ICorsOptions = {
 
     // Allow all locally loaded Chrome extensions
     if (origin.startsWith("chrome-extension://")) {
+      console.log('✅ Chrome extension allowed');
       return callback(null, true);
     }
 
-    console.log('❌ Origin blocked:', origin);
+    console.log('❌ Origin BLOCKED:', origin);
+    console.log('❌ Not in allowed list:', allowedWebOrigins);
     callback(new Error("Not allowed by CORS"));
   },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -103,7 +116,15 @@ async function connect() {
   }
 
   app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT} at http://localhost:${PORT}`);
+    console.log(`
+╔════════════════════════════════════════════════════════╗
+║  🚀 Server is running on port ${PORT}
+║  🌍 Environment: ${process.env.NODE_ENV || 'development'}
+║  🔒 Allowed CORS Origins:
+${allowedWebOrigins.map(o => `║     • ${o}`).join('\n')}
+║  ⚠️  ALLOW_ALL_ORIGINS: ${process.env.ALLOW_ALL_ORIGINS || 'false'}
+╚════════════════════════════════════════════════════════╝
+    `);
   });
 }
 connect();
