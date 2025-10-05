@@ -13,8 +13,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Allowed web origins (comma separated). Can be set via env var ALLOWED_WEB_ORIGINS.
-// Default keeps the original production origin for compatibility.
-const allowedWebOrigins = (process.env.ALLOWED_WEB_ORIGINS || "https://second-brain-wine-sigma.vercel.app")
+// Default includes the Netlify frontend URL.
+const allowedWebOrigins = (process.env.ALLOWED_WEB_ORIGINS || "https://secondbrain001.netlify.app")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
